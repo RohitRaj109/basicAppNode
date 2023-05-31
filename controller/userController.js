@@ -5,13 +5,13 @@ import jwt from 'jsonwebtoken';
 
 class UserController {
     static userRegistration = async (req,res)=>{
-        const {name,email,phone, qualification,course, mode,address, dateOfJoining, password, password_confirmation,tc} = req.body
+        const {name,email,phone,userName, password} = req.body
         const user = await UserModel.findOne({email:email})
         if(user){
             res.send({"success":false, "message":"email already exist"})
         }else{
-            if(name && email && password && password_confirmation){
-                if(password === password_confirmation){
+            if(name && email && password ){
+         
                   try{
                     const salt = await bcrypt.genSalt(12);
                     const hashPassword = await bcrypt.hash(password,salt);
@@ -19,7 +19,7 @@ class UserController {
                         name:name,
                         email:email,
                         phone:phone,
-                        userName:qualification,
+                        userName:userName,
                         password:hashPassword,
                     })
                     await doc.save()
@@ -30,9 +30,7 @@ class UserController {
                   }catch(err){
                     res.send({success:false,"message":err})
                   }
-                }else{
-                    res.send({success:false,"message":"password & confirm passoword doesn't match "})
-                }
+               
             }else{
                 res.send({success:false,"message":"all fields are required" })
             }
